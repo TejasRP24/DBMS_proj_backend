@@ -318,6 +318,8 @@ CREATE TABLE public.users (
     age integer,
     medicalcondition text,
     emergencycontact character varying(20),
+    email character varying(150) UNIQUE,
+    google_token_json JSON,
     createdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
