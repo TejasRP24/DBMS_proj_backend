@@ -77,11 +77,12 @@ app.add_middleware(
 async def health_check():
     """Health check endpoint for monitoring"""
     from app.db.base import get_engine
+    from sqlalchemy import text
     
     try:
         engine = get_engine()
         with engine.connect() as conn:
-            conn.execute("SELECT 1")
+            conn.execute(text("SELECT 1"))
         return {"status": "healthy", "database": "connected"}
     except Exception as e:
         logger.error(f"Health check failed: {e}")
@@ -89,14 +90,29 @@ async def health_check():
 
 
 # ── Import and include routers ────────────────────────────────────────────────
-from app.api.routes import persons, interactions, sessions, memory, notes, calendar_events
+from app.api.routes import (
+    users,
+    caregivers,
+    persons,
+    interactions,
+    sessions,
+    memory,
+    notes,
+    calendar_events,
+    audio,
+    emotions,
+)
 
+app.include_router(users.router, prefix="/api/users", tags=["Users"])
+app.include_router(caregivers.router, prefix="/api/caregivers", tags=["Caregivers"])
 app.include_router(persons.router, prefix="/api/persons", tags=["Persons"])
 app.include_router(interactions.router, prefix="/api/interactions", tags=["Interactions"])
 app.include_router(sessions.router, prefix="/api/sessions", tags=["Sessions"])
 app.include_router(memory.router, prefix="/api/memory", tags=["Memory"])
 app.include_router(notes.router, prefix="/api/notes", tags=["Notes"])
 app.include_router(calendar_events.router, prefix="/api/calendar", tags=["Calendar"])
+app.include_router(audio.router, prefix="/api/audio", tags=["Audio"])
+app.include_router(emotions.router, prefix="/api/emotions", tags=["Emotions"])
 
 
 # ── Root endpoint ─────────────────────────────────────────────────────────────
